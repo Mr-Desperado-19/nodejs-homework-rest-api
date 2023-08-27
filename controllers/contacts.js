@@ -1,5 +1,4 @@
 const contacts = require("../models/contacts");
-
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 const listContacts = async (req, res) => {
@@ -15,10 +14,15 @@ const getContactById = async (req, res) => {
   }
   res.json(result);
 };
+
 const addContact = async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Missing fields");
+  }
   const result = await contacts.addContact(req.body);
   res.status(201).json(result);
 };
+
 const removeContact = async (req, res) => {
   const { contactId } = req.params;
   const result = await contacts.removeContact(contactId);
