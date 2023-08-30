@@ -16,9 +16,12 @@ const getContactById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
+  if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Missing fields");
   }
+
+  // Валідація через Joi
+
   const result = await contacts.addContact(req.body);
   res.status(201).json(result);
 };
@@ -34,6 +37,13 @@ const removeContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
   const { contactId } = req.params;
+
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Missing fields");
+  }
+
+  // Валідація через Joi
+
   const result = await contacts.updateContact(contactId, req.body);
   if (!result) {
     throw HttpError(404, "Not found");
