@@ -1,6 +1,6 @@
 const contacts = require("../models/contacts");
 const { HttpError, ctrlWrapper } = require("../helpers");
-const validateBody = require("../middelwares/validateBody");
+const validateBody = require("../middlewares/validateBody");
 const { schema } = require("../schemas/contacts");
 
 const listContacts = async (req, res) => {
