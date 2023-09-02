@@ -23,11 +23,11 @@ const addContact = async (req, res) => {
     throw HttpError(400, "Missing fields");
   }
 
-  // Валідація через Joi
-  const { error } = addSchema.validate(req.body);
-  if (error) {
-    throw HttpError(400, error.details[0].message);
-  }
+  // // Валідація через Joi
+  // const { error } = addSchema.validate(req.body);
+  // if (error) {
+  //   throw HttpError(400, error.details[0].message);
+  // }
 
   const result = await contacts.addContact(req.body);
   res.status(201).json(result);
