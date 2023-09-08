@@ -1,0 +1,67 @@
+const contacts = require("../models/contacts");
+const { HttpError, ctrlWrapper } = require("../helpers");
+const validateBody = require("../middlewares/validateBody");
+const { schema } = require("../schemas/contacts");
+
+const listContacts = async (req, res) => {
+  const result = await contacts.listContacts();
+  res.json(result);
+};
+
+const getContactById = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await contacts.getContactById(contactId);
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(result);
+};
+
+const addContact = async (req, res) => {
+  // Валідація на порожнє тіло
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Missing fields");
+  }
+
+  // // Валідація через Joi
+  // const { error } = addSchema.validate(req.body);
+  // if (error) {
+  //   throw HttpError(400, error.details[0].message);
+  // }
+
+  const result = await contacts.addContact(req.body);
+  res.status(201).json(result);
+};
+
+const removeContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await contacts.removeContact(contactId);
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+  res.json({ message: "contact deleted" });
+};
+
+const updateContact = async (req, res) => {
+  const { contactId } = req.params;
+
+  // Перевірка на порожнє тіло запиту
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Missing fields");
+  }
+
+  // Валідація через Joi
+  const result = await contacts.updateContact(contactId, req.body);
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(result);
+};
+
+module.exports = {
+  listContacts: ctrlWrapper(listContacts),
+  getContactById: ctrlWrapper(getContactById),
+  addContact: [validateBody(schema), ctrlWrapper(addContact)],
+  removeContact: ctrlWrapper(removeContact),
+  updateContact: [validateBody(schema), ctrlWrapper(updateContact)],
+};
