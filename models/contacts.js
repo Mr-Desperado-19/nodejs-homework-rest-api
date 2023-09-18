@@ -1,65 +1,58 @@
-const fs = require("node:fs/promises");
-const path = require("node:path");
-const crypto = require("node:crypto");
+const mongoose = require("mongoose");
 
-const contactsPath = path.join(__dirname, "contacts.json");
+const contactSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Set name for contact"],
+  },
+  email: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-async function readContacts() {
-  const data = await fs.readFile(contactsPath, "utf-8");
-  return JSON.parse(data);
-}
-async function writeContacts(contacts) {
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-}
+const Contact = mongoose.model("Contact", contactSchema);
 
 const listContacts = async () => {
-  const contacts = await readContacts();
+  const contacts = await Contact.find();
   return contacts;
 };
 
 const getContactById = async (contactId) => {
-  const contacts = await readContacts();
-  const contact = contacts.find((contact) => contact.id === contactId);
+  const contact = await Contact.findById(contactId);
   return contact || null;
 };
 
 const addContact = async (body) => {
-  const contacts = await readContacts();
-  const { name, email, phone } = body;
-  const contact = {
-    id: crypto.randomUUID(),
-    name,
-    email,
-    phone,
-  };
-
-  contacts.push(contact);
-
-  await writeContacts(contacts);
+  const contact = await Contact.create(body);
   return contact;
 };
 
 const removeContact = async (contactId) => {
-  const contacts = await readContacts();
-  const index = contacts.findIndex((contact) => contact.id === contactId);
-  const newContacts = [
-    ...contacts.slice(0, index),
-    ...contacts.slice(index + 1),
-  ];
-  await writeContacts(newContacts);
-  return "Success removing";
+  const result = await Contact.findByIdAndDelete(contactId);
+  return result ? "Success removing" : null;
 };
 
 const updateContact = async (contactId, body) => {
-  const contacts = await readContacts();
-  const index = contacts.findIndex((contact) => contact.id === contactId);
-  if (index === -1) {
-    return null;
-  }
+  const contact = await Contact.findByIdAndUpdate(contactId, body, {
+    new: true,
+  });
+  return contact || null;
+};
 
-  contacts[index] = { id: contactId, ...body };
-  await writeContacts(contacts);
-  return contacts[index];
+const updateFavorite = async (contactId, favorite) => {
+  const contact = await Contact.findByIdAndUpdate(
+    contactId,
+    { favorite },
+    { new: true }
+  );
+  return contact || null;
 };
 
 module.exports = {
@@ -68,4 +61,6 @@ module.exports = {
   addContact,
   removeContact,
   updateContact,
+  updateFavorite,
 };
+

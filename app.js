@@ -1,6 +1,7 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 const contactsRouter = require("./routes/api/contacts");
 
@@ -11,6 +12,25 @@ const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
+
+const DB_HOST =
+  "mongodb+srv://usver123:YkOOj4W9nxVx9w2ADvZA@cluster0.llpuulr.mongodb.net/contacts_db?retryWrites=true&w=majority";
+
+mongoose.connect(DB_HOST, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+  process.exit(1);
+});
+
+db.once("open", () => {
+  console.log("Database connection successful");
+});
 
 app.use("/api/contacts", contactsRouter);
 
