@@ -2,7 +2,7 @@ const contacts = require("../models/contacts");
 const { HttpError, ctrlWrapper } = require("../helpers");
 const validateBody = require("../middlewares/validateBody");
 const { schema } = require("../schemas/contacts");
-const Joi = require("joi"); // Додано Joi для валідації айді
+const Joi = require("joi");
 
 const listContacts = async (req, res) => {
   try {
@@ -102,6 +102,6 @@ module.exports = {
   addContact: [validateBody(schema), ctrlWrapper(addContact)],
   removeContact: ctrlWrapper(removeContact),
   updateContact: [validateBody(schema), ctrlWrapper(updateContact)],
-  updateFavoriteContact: ctrlWrapper(updateFavoriteContact), // Додано оновлену функцію
+  updateFavoriteContact: ctrlWrapper(updateFavoriteContact),
 };
 

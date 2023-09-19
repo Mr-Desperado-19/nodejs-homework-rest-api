@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const DB_HOST =
-  "mongodb+srv://usver123:YkOOj4W9nxVx9w2ADvZA@cluster0.llpuulr.mongodb.net/contacts_db?retryWrites=true&w=majority";
+  "mongodb+srv://arturhlebov:scorpio1995@cluster0.nte6lap.mongodb.net/db-contacts?retryWrites=true&w=majority";
 
 mongoose.connect(DB_HOST, {
   useNewUrlParser: true,
