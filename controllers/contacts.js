@@ -3,6 +3,7 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 const validateBody = require("../middlewares/validateBody");
 const { schema } = require("../schemas/contacts");
 const Joi = require("joi");
+const mongoose = require("mongoose");
 
 const listContacts = async (req, res) => {
   try {
@@ -15,9 +16,11 @@ const listContacts = async (req, res) => {
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
-  if (!Joi.isUUID(contactId)) { // Перевірка на невалідний айді
+  
+  if (!mongoose.isValidObjectId(contactId)) {
     throw HttpError(400, "Invalid contactId");
   }
+  
   try {
     const result = await contacts.getContactById(contactId);
     if (!result) {
@@ -43,9 +46,11 @@ const addContact = async (req, res) => {
 
 const removeContact = async (req, res) => {
   const { contactId } = req.params;
-  if (!Joi.isUUID(contactId)) { // Перевірка на невалідний айді
+  
+  if (!mongoose.isValidObjectId(contactId)) {
     throw HttpError(400, "Invalid contactId");
   }
+  
   try {
     const result = await contacts.removeContact(contactId);
     if (!result) {
@@ -59,9 +64,11 @@ const removeContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
   const { contactId } = req.params;
-  if (!Joi.isUUID(contactId)) { // Перевірка на невалідний айді
+  
+  if (!mongoose.isValidObjectId(contactId)) {
     throw HttpError(400, "Invalid contactId");
   }
+  
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Missing fields");
   }
@@ -79,9 +86,11 @@ const updateContact = async (req, res) => {
 const updateFavoriteContact = async (req, res) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
-  if (!Joi.isUUID(contactId)) { // Перевірка на невалідний айді
+  
+  if (!mongoose.isValidObjectId(contactId)) {
     throw HttpError(400, "Invalid contactId");
   }
+  
   if (favorite === undefined) {
     throw HttpError(400, "Missing field favorite");
   }
@@ -104,4 +113,3 @@ module.exports = {
   updateContact: [validateBody(schema), ctrlWrapper(updateContact)],
   updateFavoriteContact: ctrlWrapper(updateFavoriteContact),
 };
-
