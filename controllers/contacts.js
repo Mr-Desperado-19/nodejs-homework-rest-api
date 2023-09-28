@@ -16,11 +16,11 @@ const listContacts = async (req, res) => {
 
 const getContactById = async (req, res) => {
   const { contactId } = req.params;
-  
-  if (!mongoose.isValidObjectId(contactId)) {
-    throw HttpError(400, "Invalid contactId");
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw HttpError(404, "Not found");
   }
-  
+
   try {
     const result = await contacts.getContactById(contactId);
     if (!result) {
@@ -46,11 +46,11 @@ const addContact = async (req, res) => {
 
 const removeContact = async (req, res) => {
   const { contactId } = req.params;
-  
-  if (!mongoose.isValidObjectId(contactId)) {
-    throw HttpError(400, "Invalid contactId");
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw HttpError(404, "Not found");
   }
-  
+
   try {
     const result = await contacts.removeContact(contactId);
     if (!result) {
@@ -64,11 +64,11 @@ const removeContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
   const { contactId } = req.params;
-  
-  if (!mongoose.isValidObjectId(contactId)) {
-    throw HttpError(400, "Invalid contactId");
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw HttpError(404, "Not found");
   }
-  
+
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Missing fields");
   }
@@ -86,11 +86,11 @@ const updateContact = async (req, res) => {
 const updateFavoriteContact = async (req, res) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
-  
-  if (!mongoose.isValidObjectId(contactId)) {
-    throw HttpError(400, "Invalid contactId");
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw HttpError(404, "Not found");
   }
-  
+
   if (favorite === undefined) {
     throw HttpError(400, "Missing field favorite");
   }
@@ -101,7 +101,7 @@ const updateFavoriteContact = async (req, res) => {
     }
     res.json(result);
   } catch (error) {
-    throw HttpError(500, "Server error");
+    throw HttpError(400, "Validation error"); // Валідаційна помилка зі статусом 400
   }
 };
 
@@ -113,3 +113,4 @@ module.exports = {
   updateContact: [validateBody(schema), ctrlWrapper(updateContact)],
   updateFavoriteContact: ctrlWrapper(updateFavoriteContact),
 };
+
