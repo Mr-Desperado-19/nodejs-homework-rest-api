@@ -15,7 +15,7 @@ const contactSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-}, { versionKey: false }); // Поле "__v" не додається
+}, { versionKey: false });
 
 const Contact = mongoose.model("Contact", contactSchema);
 
