@@ -10,58 +10,21 @@ const contactSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    required: [true, "Phone number is required"],
   },
   favorite: {
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }
 }, { versionKey: false });
 
 const Contact = mongoose.model("Contact", contactSchema);
 
-const listContacts = async () => {
-  const contacts = await Contact.find();
-  return contacts;
-};
+module.exports = Contact;
 
-const getContactById = async (contactId) => {
-  const contact = await Contact.findById(contactId);
-  return contact || null;
-};
-
-const addContact = async (body) => {
-  const contact = await Contact.create(body);
-  return contact;
-};
-
-const removeContact = async (contactId) => {
-  const result = await Contact.findByIdAndDelete(contactId);
-  return result ? "Success removing" : null;
-};
-
-const updateContact = async (contactId, body) => {
-  const contact = await Contact.findByIdAndUpdate(contactId, body, {
-    new: true,
-  });
-  return contact || null;
-};
-
-const updateFavorite = async (contactId, favorite) => {
-  const contact = await Contact.findByIdAndUpdate(
-    contactId,
-    { favorite },
-    { new: true }
-  );
-  return contact || null;
-};
-
-module.exports = {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateContact,
-  updateFavorite,
-};
 
 
