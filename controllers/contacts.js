@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const listContacts = async (req, res) => {
   try {
     console.log("Received GET request to /api/contacts");
-    const result = await contacts.listContacts();
+    const result = await contacts.listContactsByOwner(req.user._id);
     res.json(result);
   } catch (error) {
     console.error("Error:", error);
@@ -24,7 +24,7 @@ const getContactById = async (req, res) => {
 
   try {
     console.log(`Received GET request to /api/contacts/${contactId}`);
-    const result = await contacts.getContactById(contactId);
+    const result = await contacts.getContactByIdByOwner(contactId, req.user._id);
     if (!result) {
       console.error("Contact not found:", contactId);
       throw HttpError(404, "Not found");
@@ -43,7 +43,7 @@ const addContact = async (req, res) => {
       console.error("Missing fields in request body");
       throw HttpError(400, "Missing fields");
     }
-    const result = await contacts.addContact(req.body);
+    const result = await contacts.addContactByOwner(req.body, req.user._id);
     res.status(201).json(result);
   } catch (error) {
     console.error("Error:", error);
@@ -61,7 +61,7 @@ const removeContact = async (req, res) => {
 
   try {
     console.log(`Received DELETE request to /api/contacts/${contactId}`);
-    const result = await contacts.removeContact(contactId);
+    const result = await contacts.removeContactByOwner(contactId, req.user._id);
     if (!result) {
       console.error("Contact not found:", contactId);
       throw HttpError(404, "Not found");
@@ -87,7 +87,7 @@ const updateContact = async (req, res) => {
       console.error("Missing fields in request body");
       throw HttpError(400, "Missing fields");
     }
-    const result = await contacts.updateContact(contactId, req.body);
+    const result = await contacts.updateContactByOwner(contactId, req.body, req.user._id);
     if (!result) {
       console.error("Contact not found:", contactId);
       throw HttpError(404, "Not found");
@@ -115,7 +115,7 @@ const updateFavoriteContact = async (req, res) => {
 
   try {
     console.log(`Received PATCH request to /api/contacts/${contactId}/favorite with data:`, req.body);
-    const result = await contacts.updateFavorite(contactId, favorite);
+    const result = await contacts.updateFavoriteContactByOwner(contactId, favorite, req.user._id);
     if (!result) {
       console.error("Contact not found:", contactId);
       throw HttpError(404, "Not found");

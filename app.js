@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const contactsRouter = require("./routes/api/contacts");
+const authRouter = require("./routes/api/auth");
+const userRouter = require("./routes/api/user");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -22,5 +24,8 @@ mongoose
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 
 module.exports = app;
+
