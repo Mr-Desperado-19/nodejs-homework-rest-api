@@ -1,9 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const authMiddleware = require("../../middlewares/authMiddleware");
+const express = require('express');
+const userController = require('../../controllers/user');
+const authMiddleware = require('../../middlewares/authMiddleware');
 
-router.get("/current", authMiddleware, (req, res) => {
-  res.json({ email: req.user.email, subscription: req.user.subscription });
-});
+const router = express.Router();
+
+router.patch('/avatars', authMiddleware, userController.updateUserAvatar);
 
 module.exports = router;
