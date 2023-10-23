@@ -4,6 +4,8 @@ const contactsRouter = require("./routes/api/contacts");
 const authRouter = require("./routes/api/auth");
 const userRouter = require("./routes/api/user");
 const dotenv = require("dotenv");
+const path = require("path");
+const multer = require("multer");
 
 dotenv.config();
 
@@ -23,9 +25,14 @@ mongoose
 
 app.use(express.json());
 
+// Роздача статики
+app.use(express.static(path.join(__dirname, "public")));
+
+// Папка для завантаження аватарок
+const upload = multer({ dest: path.join(__dirname, "tmp") });
+
 app.use("/api/contacts", contactsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 
 module.exports = app;
-

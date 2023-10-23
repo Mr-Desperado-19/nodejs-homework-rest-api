@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema({
     enum: ["starter", "pro", "business"],
     default: "starter"
   },
-  token: String
+  token: String,
+  avatarURL: String, // Нове поле для зберігання URL аватарки
 });
 
 userSchema.pre('save', async function (next) {
