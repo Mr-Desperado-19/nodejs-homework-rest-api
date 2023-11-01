@@ -69,7 +69,7 @@ const verifyEmail = async (req, res) => {
       return res.status(400).json({ message: 'User has already been verified' });
     }
 
-    // Встановлюємо поле 'verify' в 'true' і 'verificationToken' в 'null'
+    // Встановення поля 'verify' в 'true' і 'verificationToken' в 'null'
     user.verify = true;
     user.verificationToken = null;
     await user.save();
@@ -99,7 +99,7 @@ const resendVerificationEmail = async (req, res) => {
       return res.status(400).json({ message: 'User has already been verified' });
     }
 
-    // Відправляємо лист для верифікації email користувача
+    // Відправлення листа для верифікації email користувача
     await sendVerificationEmail(email, user.verificationToken);
 
     res.status(200).json({ message: 'Verification email sent' });
