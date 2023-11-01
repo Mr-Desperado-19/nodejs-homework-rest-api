@@ -1,20 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const contactsRouter = require("./routes/api/contacts");
-const authRouter = require("./routes/api/auth");
-const userRouter = require("./routes/api/user");
-const dotenv = require("dotenv");
-const path = require("path");
-const multer = require("multer");
+require('dotenv').config();
 
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-const MONGODB_URI = process.env.DB_HOST;
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const userRoutes = require('./routes/api/user');
 
 mongoose
-  .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("MongoDB connected");
   })
@@ -23,16 +15,12 @@ mongoose
     process.exit(1);
   });
 
-app.use(express.json());
+const app = express();
 
-// Роздача статики
-app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.json());
+app.use('/users', userRoutes);
 
-// Папка для завантаження аватарок
-const upload = multer({ dest: path.join(__dirname, "tmp") });
-
-app.use("/api/contacts", contactsRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/users", userRouter);
-
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
