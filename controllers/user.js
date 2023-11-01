@@ -51,6 +51,36 @@ const registerUser = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  try {
+    const { verificationToken } = req.params;
+
+    if (!verificationToken) {
+      return res.status(400).json({ message: 'Error: missing verification token' });
+    }
+
+    const user = await User.findOne({ verificationToken });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User with this verification token not found' });
+    }
+
+    if (user.verify) {
+      return res.status(400).json({ message: 'User has already been verified' });
+    }
+
+    // Встановлюємо поле 'verify' в 'true' і 'verificationToken' в 'null'
+    user.verify = true;
+    user.verificationToken = null;
+    await user.save();
+
+    res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    console.error('Error verifying email:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const resendVerificationEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -69,6 +99,7 @@ const resendVerificationEmail = async (req, res) => {
       return res.status(400).json({ message: 'User has already been verified' });
     }
 
+    // Відправляємо лист для верифікації email користувача
     await sendVerificationEmail(email, user.verificationToken);
 
     res.status(200).json({ message: 'Verification email sent' });
@@ -80,5 +111,6 @@ const resendVerificationEmail = async (req, res) => {
 
 module.exports = {
   registerUser,
+  verifyEmail,
   resendVerificationEmail,
 };

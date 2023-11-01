@@ -10,3 +10,4 @@ router.get('/verify/:verificationToken', userController.verifyEmail);
 router.post('/verify', userController.resendVerificationEmail);
 
 module.exports = router;
+
